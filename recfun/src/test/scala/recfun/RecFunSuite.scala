@@ -6,7 +6,7 @@ class RecFunSuite extends munit.FunSuite:
   // ------ balance tests -----------------------------------------------------
 
   test("balance: '(if (zero? x) max (/ 1 x))' is balanced") {
-    assert(balance("(if (zero? x) max (/ 1 x))".toList))
+    assert(balance("((if (zero? x....) max (/ 1 x)))".toList))
   }
 
   test("balance: 'I told him ...' is balanced") {
