@@ -29,7 +29,7 @@ trait Huffman extends HuffmanInterface:
     case Fork(_, _, chars: List[Char], _) => chars
     case Leaf(char: Char, _) => List(char)
 
-  def makeCodeTree(left: CodeTree, right: CodeTree) =
+  def makeCodeTree(left: CodeTree, right: CodeTree): Fork =
     Fork(left, right, chars(left) ::: chars(right), weight(left) + weight(right))
 
   // Part 2: Generating Huffman trees
@@ -76,7 +76,7 @@ trait Huffman extends HuffmanInterface:
     loop(chars)
 
   /**
-   * Returns a list of `Leaf` nodes for a given frequency table `freqs`.
+   * Returns a list of `Leaf` nodes for a given frequency table 'freqs'.
    *
    * The returned list should be ordered by ascending weights (i.e. the
    * head of the list should have the smallest weight), where the weight
@@ -85,7 +85,7 @@ trait Huffman extends HuffmanInterface:
   def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] =
     def loop(freqs: List[(Char, Int)]): List[Leaf] = freqs match
       case Nil => Nil
-      case x :: xs => new Leaf(x._1, x._2) :: loop(xs)
+      case x :: xs => Leaf(x._1, x._2) :: loop(xs)
 
     loop(freqs.sortWith((p1, p2) => p1._2 < p2._2))
 
@@ -165,7 +165,7 @@ trait Huffman extends HuffmanInterface:
 
   /**
    * What does the secret message say? Can you decode it?
-   * For the decoding use the `frenchCode' Huffman tree defined above.
+   * For the decoding use the 'frenchCode' Huffman tree defined above.
    */
   val secret: List[Bit] = List(0,0,1,1,1,0,1,0,1,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,1,1,1,1,0,1,0,1,1,0,0,0,0,1,0,1,1,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1)
 
@@ -200,7 +200,7 @@ trait Huffman extends HuffmanInterface:
       case x :: xs => decodeChar(tree, x) :: loop(tree, xs)
       case _ => List()
 
-    loop(tree, text).flatMap(x => x)
+    loop(tree, text).flatten
 
   // Part 4b: Encoding using code table
 
@@ -211,7 +211,7 @@ trait Huffman extends HuffmanInterface:
    * the code table `table`.
    */
   def codeBits(table: CodeTable)(char: Char): List[Bit] = table match
-    case Nil => throw new NoSuchElementException(char + " cannot be found")
+    case Nil => throw new NoSuchElementException(char.toString + " cannot be found")
     case (character, bits) :: _ => if (character == char) bits else codeBits(table.tail)(char)
 
   /**
@@ -252,7 +252,7 @@ trait Huffman extends HuffmanInterface:
       case x :: xs =>
         codeBits(table)(x) :: loop(table, text.tail)
 
-    loop(convert(tree), text).flatMap(x => x)
+    loop(convert(tree), text).flatten
 
 
 object Huffman extends Huffman
